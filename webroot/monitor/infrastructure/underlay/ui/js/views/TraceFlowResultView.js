@@ -7,7 +7,8 @@ define([
     'contrail-view',
     'knockback'
 ], function (_, ContrailView, Knockback) {
-
+    var myIP = "10.204.217.116"; // nodeg32
+    myIP = "172.25.150.82"; // langdon setup
     var TraceFlowResultView = ContrailView.extend({
         render: function () {
             var self = this, viewConfig = self.attributes.viewConfig;
@@ -55,8 +56,8 @@ define([
         getViewConfig: function () {
             var self = this, viewConfig = self.attributes.viewConfig,
                 traceFlowGridColumns = [];
-            var graphView = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphView');
-            var underlayGraphModel = graphView.model, traceFlowRemoteConfig = {};
+            var underlayGraphModel = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphModel');
+            var traceFlowRemoteConfig = {};
             if(self.model.traceflow_radiobtn_name() == 'vRouter') {
                 var vRouterDetails = getSelectedVrouterDetails(self.model);
                 var ip = vRouterDetails['ip'];
@@ -218,8 +219,7 @@ define([
     };
 
     function getSelectedVrouterDetails (traceFlowFormModel) {
-        var graphView = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphView');
-        var graphModel = graphView.model;
+        var graphModel = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphModel');
         var vRouterMap = graphModel.vRouterMap;
         var vRouterData =
             ifNull(vRouterMap[traceFlowFormModel.vrouter_dropdown_name()], {});
@@ -238,8 +238,7 @@ define([
     function doTraceFlow (rowId, formModel) {
         var flowGrid =
             $("#" +ctwc.TRACEFLOW_RESULTS_GRID_ID).data('contrailGrid');
-        var graphView = monitorInfraUtils.getUnderlayGraphInstance();
-        var graphModel = graphView.model;
+        var graphModel = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphModel');
         var contextVrouterIp;
         if(formModel != null && formModel.showvRouter())
             contextVrouterIp =
@@ -299,6 +298,8 @@ define([
             nwFqName = dataItem['sourcevn'] != null ?
                 dataItem['sourcevn'] : dataItem['src_vn'];
         }
+        //postData['nodeIP'] = myIP;
+        //postData['resolveVrfId'] = myIP;
         if(postData['nodeIP'] == null ||
                 graphModel.checkIPInVrouterList(postData['nodeIP'])) {
             showInfoWindow("Cannot Trace route for the selected flow", "Info");
@@ -332,8 +333,7 @@ define([
     function doReverseTraceFlow (rowId, formModel) {
         var flowGrid =
             $("#" +ctwc.TRACEFLOW_RESULTS_GRID_ID).data('contrailGrid');
-        var graphView = monitorInfraUtils.getUnderlayGraphInstance();
-        var graphModel = graphView.model;
+            var graphModel = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphModel');
         var dataItem = ifNull(flowGrid._grid.getDataItem(rowId),{});
         var contextVrouterIp = '';
         if(formModel != null && formModel.showvRouter())
@@ -388,6 +388,8 @@ define([
                 postData['resolveVrfId'] = postData['nodeIP'];
             }
         }
+        //postData['nodeIP'] = myIP;
+        //postData['resolveVrfId'] = myIP;
         if(graphModel.checkIPInVrouterList(postData['nodeIP'])) {
             showInfoWindow("Cannot Trace route for the selected flow", "Info");
             return;
@@ -464,13 +466,10 @@ define([
                     }
                 }
             }
-            var graphView = monitorInfraUtils.getUnderlayGraphInstance();
-            var graphModel = graphView != null ? graphView.model : null;
-            if (graphModel != null) {
-                graphModel.underlayPathReqObj = postData;
-                graphModel.flowPath.set('links',ifNull(response['links'], []));
-                graphModel.flowPath.set('nodes',ifNull(response['nodes'], []));
-            }
+            var graphModel = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphModel');
+            graphModel.underlayPathReqObj = postData;
+            graphModel.flowPath.set('links',ifNull(response['links'], []));
+            graphModel.flowPath.set('nodes',ifNull(response['nodes'], []));
             if(typeof response != 'string')
                 $('html,body').animate({scrollTop:0}, 500);
         }).fail(function(error,status) {

@@ -156,7 +156,6 @@ define([
                         var lazyAjaxConfig,
                             interfaceList = getValueByJsonPath(responseJSON, 
                                 'value;UveVirtualMachineAgent;interface_list', []);
-
                         lazyAjaxConfig = {
                             url: ctwc.URL_VM_INTERFACES,
                             type: 'POST',

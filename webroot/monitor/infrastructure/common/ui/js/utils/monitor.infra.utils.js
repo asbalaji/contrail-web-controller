@@ -1925,9 +1925,9 @@ define([
             var ajaxConfig = {};
             var endpoints = ifNull(data['endpoints'],[]);
             var sourceType = getValueByJsonPath(data,
-                'sourceElement;attributes;nodeDetails;node_type','-');
+                'sourceElement;options;nodeDetails;node_type','-');
             var targetType = getValueByJsonPath(data,
-                'targetElement;attributes;nodeDetails;node_type','-');
+                'targetElement;options;nodeDetails;node_type','-');
             var view = 'LineWithFocusChartView', modelMap = null;
             var viewConfig = {}, viewPathPrefix;
             if(sourceType == ctwc.PROUTER && targetType == ctwc.PROUTER) {
@@ -1951,8 +1951,8 @@ define([
                 };
             } else if(sourceType == ctwc.PROUTER && targetType == ctwc.VROUTER) {
                 var vrouter = (sourceType == ctwc.VROUTER) ?
-                    data['sourceElement']['attributes']['nodeDetails']['name']:
-                    data['targetElement']['attributes']['nodeDetails']['name'];
+                    data['sourceElement']['options']['nodeDetails']['name']:
+                    data['targetElement']['options']['nodeDetails']['name'];
                 var params = {
                     minsSince: 60,
                     sampleCnt: 120,
@@ -1992,9 +1992,9 @@ define([
             } else if(sourceType == ctwc.VIRTUALMACHINE ||
                     targetType == ctwc.VIRTUALMACHINE) {
                 var instanceUUID = getValueByJsonPath(data,
-                    'targetElement;attributes;nodeDetails;name','-');
+                    'targetElement;options;nodeDetails;name','-');
                 var vmName = getValueByJsonPath(data,
-                    'targetElement;attributes;nodeDetails;more_attributes;vm_name','-');
+                    'targetElement;options;nodeDetails;more_attributes;vm_name','-');
                 var modelKey = ctwc.get(ctwc.UMID_INSTANCE_UVE, instanceUUID);
                 view = 'InstanceTrafficStatsView';
                 viewPathPrefix = 'monitor/networking/ui/js/views/';
@@ -2094,8 +2094,8 @@ define([
         },
 
         self.getTraceFlowVrouterGridColumns = function () {
-            var graphView = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphView');
-            computeNodes = graphView.model.vRouters;
+            var graphModel = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphModel');
+            computeNodes = graphModel.vRouters;
             return [
                 {
                     field:'peer_vrouter',
@@ -2619,7 +2619,8 @@ define([
         };
 
         self.showUnderlayPaths = function (data) {
-            var graphModel = monitorInfraUtils.getUnderlayGraphInstance().model;
+            //var graphModel = monitorInfraUtils.getUnderlayGraphInstance().model;
+            var graphModel = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphModel');
             var currentUrlHashObj = layoutHandler.getURLHashObj(),
                 currentPage = currentUrlHashObj.p,
                 currentParams = currentUrlHashObj.q;

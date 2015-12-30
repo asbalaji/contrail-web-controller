@@ -113,9 +113,8 @@ define([
                     remote: {
                         ajaxConfig: searchFlowRemoteConfig,
                         dataParser: function(response) {
-                            var graphView = monitorInfraUtils
-                                .getUnderlayGraphInstance();
-                            response['vRouters'] = graphView.model.vRouters;
+                            var graphModel = $("#"+ctwl.UNDERLAY_GRAPH_ID).data('graphModel');
+                            response['vRouters'] = graphModel.vRouters;
                             return monitorInfraParsers
                                 .parseUnderlayFlowRecords(response);
                         }
